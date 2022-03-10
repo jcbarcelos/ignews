@@ -1,4 +1,4 @@
-import { stripe } from "./stripe";
+import { stripe } from "../../services/stripe";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/client";
 

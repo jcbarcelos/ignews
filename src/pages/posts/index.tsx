@@ -3,6 +3,8 @@ import { getPrismicClient } from "../../services/prismic";
 import Prismic from "@prismicio/client";
 import { RichText } from "prismic-dom";
 import styles from "./styles.module.scss";
+import Link from "next/link";
+import { GetStaticProps } from "next";
 
 type Post = {
   slug: string;
@@ -24,30 +26,35 @@ export default function Posts({ posts }: PostsProps) {
       <main className={styles.container}>
         <div className={styles.posts}>
           {posts.map((post) => (
-            <a href="#" key={post.slug}>
-              <time>{post.updateAt}</time>
-              <strong>{post.title}</strong>
-              <p>{post.except}</p>
-
-            </a>
+            <Link href={`/posts/${post.slug}`}>
+              <a key={post.slug}>
+                <time>{post.updateAt}</time>
+                <strong>{post.title}</strong>
+                <p>{post.except}</p>
+              </a>
+            </Link>
           ))}
         </div>
       </main>
     </>
   );
 }
-export const getStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
+
   const response = await prismic.query(
-    [Prismic.predicates.at("document.type", "post")],
+    [
+      Prismic.predicates.at("document.type", "post")
+    ],
     {
       fetch: ["post.title", "post.content"],
       pageSize: 100,
-    }
-  );
+    });
+
   const posts = response.results.map((post) => {
+    
     return {
-      slug: post.id,
+      slug: post.uid,
       title: RichText.asText(post.data?.title),
       except:
         post.data?.content.find((content) => content.type === "paragraph")
@@ -64,7 +71,7 @@ export const getStaticProps = async () => {
   });
   return {
     props: {
-      posts,
+      posts
     },
   };
 };

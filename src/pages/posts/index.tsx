@@ -1,6 +1,20 @@
 import Head from "next/head";
+import { getPrismicClient } from "../../services/prismic";
+import Prismic from "@prismicio/client";
+import { RichText } from "prismic-dom";
 import styles from "./styles.module.scss";
-export default function Posts() {
+
+type Post = {
+  slug: string;
+  title: string;
+  except: string;
+  updateAt: string;
+};
+interface PostsProps {
+  posts: Post[];
+}
+
+export default function Posts({ posts }: PostsProps) {
   return (
     <>
       <Head>
@@ -9,25 +23,48 @@ export default function Posts() {
 
       <main className={styles.container}>
         <div className={styles.posts}>
-          <a href="#">
-            <time>12 de março de 2022</time>
-            <strong>teste</strong>
-            <p>Teteteteteteetet</p>
-          </a>
+          {posts.map((post) => (
+            <a href="#" key={post.slug}>
+              <time>{post.updateAt}</time>
+              <strong>{post.title}</strong>
+              <p>{post.except}</p>
 
-          <a href="#">
-            <time>12 de março de 2022</time>
-            <strong>teste</strong>
-            <p>Teteteteteteetet</p>
-          </a>
-
-          <a href="#">
-            <time>12 de março de 2022</time>
-            <strong>teste</strong>
-            <p>Teteteteteteetet</p>
-          </a>
+            </a>
+          ))}
         </div>
       </main>
     </>
   );
 }
+export const getStaticProps = async () => {
+  const prismic = getPrismicClient();
+  const response = await prismic.query(
+    [Prismic.predicates.at("document.type", "post")],
+    {
+      fetch: ["post.title", "post.content"],
+      pageSize: 100,
+    }
+  );
+  const posts = response.results.map((post) => {
+    return {
+      slug: post.id,
+      title: RichText.asText(post.data?.title),
+      except:
+        post.data?.content.find((content) => content.type === "paragraph")
+          ?.text ?? "",
+      updateAt: new Date(post.last_publication_date).toLocaleDateString(
+        "pt-BR",
+        {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        }
+      ),
+    };
+  });
+  return {
+    props: {
+      posts,
+    },
+  };
+};

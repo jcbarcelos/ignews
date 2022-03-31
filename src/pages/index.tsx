@@ -1,17 +1,17 @@
 import Head from "next/head";
 import { GetStaticProps } from "next";
-import SubscribeButton  from "./components/SubscribeButton";
+import { SubscribeButton } from "./components/SubscribeButton";
 import styles from "./home.module.scss";
 import { stripe } from "../services/stripe";
 
 interface HomeProps {
   product: {
     priceId: string;
-    amount: number;
+    amount: string;
   };
 }
 
-export default function Home({ product }: HomeProps) {
+export  function Home({ product }: HomeProps) {
   return (
     <>
       <Head>

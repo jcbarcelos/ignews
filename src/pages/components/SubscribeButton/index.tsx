@@ -5,9 +5,9 @@ import { api } from "../../../services/api";
 import { getStripeJs } from "../../../services/stripe-js";
 import styles from "./styles.module.scss";
 
-export default function SubscribeButton() {
+export function SubscribeButton() {
   const [session] = useSession();
-  const router = useRouter()
+  const router = useRouter();
 
   async function handleSubscribe() {
     if (!session) {
@@ -17,16 +17,16 @@ export default function SubscribeButton() {
     //checkout session
 
     if (session.activeSubscription) {
-      router.push('/posts');
+      router.push("/posts");
       return;
     }
     try {
       const response = await api.post("/subscribe");
       const { sessionId } = response.data;
-      const stripe = await getStripeJs()
-      await stripe.redirectToCheckout({sessionId})
+      const stripe = await getStripeJs();
+      await stripe.redirectToCheckout({ sessionId });
     } catch (error) {
-      alert(error.message)
+      alert(error.message);
     }
   }
   return (

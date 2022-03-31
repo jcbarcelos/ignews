@@ -16,7 +16,7 @@ interface PostsProps {
   posts: Post[];
 }
 
-export default function Posts({ posts }: PostsProps) {
+export function Posts({ posts }: PostsProps) {
   return (
     <>
       <Head>
@@ -26,7 +26,7 @@ export default function Posts({ posts }: PostsProps) {
       <main className={styles.container}>
         <div className={styles.posts}>
           {posts.map((post) => (
-            <Link href={`/posts/${post.slug}`}>
+            <Link key={post.title} href={`/posts/${post.slug}`}>
               <a key={post.slug}>
                 <time>{post.updateAt}</time>
                 <strong>{post.title}</strong>

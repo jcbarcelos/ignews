@@ -4,7 +4,7 @@ import { FaGithub } from "react-icons/fa";
 import { FiX } from "react-icons/fi";
 import { signIn, useSession, signOut } from "next-auth/client";
 
-export default function SignButton() {
+export function SignButton() {
   const [session] =  useSession();
     
   return session ? (

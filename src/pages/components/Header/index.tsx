@@ -1,9 +1,9 @@
 import React from "react";
-import SignButton from "../SignButton";
+import {SignButton} from "../SignButton";
 import styles from "./styles.module.scss";
 import { ActiveLink } from "../ActiveLink";
 
-export default function Header() {
+export function Header() {
  
   return (
     <header className={styles.headerContainer}>
